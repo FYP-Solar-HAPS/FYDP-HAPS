@@ -1,0 +1,70 @@
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# ---------- Secrets and personal settings (never commit) ----------
+.env
+.cdsapirc
+*.key
+*credentials*
+
+# ---------- Editors and OS ----------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*
+
+# ---------- Large data: keep on the shared drive ----------
+*.nc
+*.grib
+*.grb
+*.h5
+*.hdf5
+*.zip
+*.7z
+
+# ---------- Literature PDFs: shared drive only ----------
+literature/**/*.pdf
+
+# ---------- ANSYS Fluent / Mechanical / Workbench outputs ----------
+# (*.dat is NOT ignored globally: airfoil coordinates and test data use .dat)
+*.cas
+*.cas.h5
+*.dat.h5
+cfd/**/*.dat
+fea/**/*.dat
+*.msh
+*.msh.h5
+*.trn
+*.rst
+*.rth
+cfd/**/*_files/
+fea/**/*_files/
+*.wbpj.lock
+
+# ---------- OpenFOAM time and processor folders ----------
+cfd/**/processor*/
+cfd/**/postProcessing/
+cfd/**/[1-9]*/
+
+# ---------- Native CAD (shared drive) ----------
+*.SLDPRT
+*.SLDASM
+*.sldprt
+*.sldasm
+
+# ---------- Media ----------
+*.mp4
+*.mov
+*.avi
