@@ -34,8 +34,15 @@ desktop.ini
 *.zip
 *.7z
 
-# ---------- Literature PDFs: shared drive only ----------
+# ---------- Literature originals: shared drive only ----------
+# Only the rules and registers (.md/.csv) belong in the repository. The repository is public,
+# so text copies of literature files (they contain publisher abstracts) stay on the drive.
 literature/**/*.pdf
+literature/**/*.docx
+literature/**/*.doc
+literature/**/*.txt
+literature/_not_for_repo/
+literature/text_copies/
 
 # ---------- ANSYS Fluent / Mechanical / Workbench outputs ----------
 # (*.dat is NOT ignored globally: airfoil coordinates and test data use .dat)

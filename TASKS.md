@@ -8,10 +8,11 @@ Single source of truth for task status. Full card details live in `cards/<ID>.md
 **Rules**
 - Change a status only in the same pull request that delivers the work, or when a dependency becomes `VERIFIED` (`BLOCKED` → `READY`).
 - `VERIFIED` is set only by the named reviewer, with the date.
+- Set-up exception (PLAN.md §3.4, W0 only, ends at G0 at the latest): the maintainer may merge set-up pull requests after CI passes; the named reviewer reviews them after the merge and only then sets `VERIFIED`.
 - A card may run in paired mode (PLAN.md §3.7) before its dependencies are `VERIFIED`, but stays unverifiable until they are.
 - Never delete a row. Descoped work is marked `DESCOPED` with the reason in its card.
 
-Last updated: 14 Nov 2026
+Last updated: 15 Nov 2026
 
 ---
 
@@ -34,8 +35,10 @@ Last updated: 14 Nov 2026
 | T-W0.02 | Python 3.12 environment, lock file, external tools installed and versions recorded | T-W0.01 | AR | BLOCKED | |
 | T-W0.03 | Agent operating brief (`AGENTS.md` and tool-specific files) | T-W0.01 | SU | BLOCKED | |
 | T-W0.04 | Pre-registration v0 (`acceptance/criteria.yaml`, tag `criteria-v0`) | T-W0.01 | SU | BLOCKED | |
-| T-LIT.01 | Literature index and bibliography | T-W0.01 | AR | BLOCKED | |
+| T-LIT.00 | Literature intake: drive reorganised, index/copies/leads/gaps run, duplicates decided, `library.bib` exported | T-W0.01 | SU (post-merge) | IN-PROGRESS | Tooling and rules: PR #1, merged under set-up exception. Intake runs still to do. See `literature/README.md` §1, §4, §8 |
+| T-LIT.01 | Literature index and bibliography (complete `index.csv`, check relevant leads) | T-LIT.00 | AR | BLOCKED | |
 | T-LIT.02 | Evidence-register extraction (ongoing, on demand per module) | T-LIT.01 | AR | BLOCKED | Runs through W4 |
+| T-LIT.03 | AI-claimed gap verification (`gap_register.csv`) | T-LIT.01 | SU | BLOCKED | Before any gap is stated in a report; runs through W4 |
 | T-REG.01 | Permission application status (NUST/CAA) | — | SU | READY | |
 | T-REG.02 | Compute access request (NUST machines) and Flow360 credit check | — | SU | READY | |
 
@@ -124,3 +127,5 @@ Last updated: 14 Nov 2026
 | Date | Change | By |
 |---|---|---|
 | 14 Nov 2026 | Board created from PLAN.md v1.1 | |
+| 15 Nov 2026 | Set-up exception added (PLAN.md §3.4): maintainer merges W0 set-up PRs after CI; named reviewer reviews after merge, before G0 | |
+| 15 Nov 2026 | Added T-LIT.00 (literature intake) and T-LIT.03 (gap verification); T-LIT.01 now depends on T-LIT.00 (PLAN.md v1.2) | |
