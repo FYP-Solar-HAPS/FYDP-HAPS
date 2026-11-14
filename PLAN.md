@@ -3,7 +3,7 @@
 **Project:** Modular Solar-Electric UAV for Emergency Telecommunications: A Low-Altitude Proof-of-Concept for Energy-Optimised, Multi-Payload HALE Platforms
 **Team:** Syed Shah Umer (lead), Ateeq-ur-Rehman, Muhammad Hayat Arain. **Supervisor:** Mr. Aun Haider, NUST SMME
 **Document type:** Operational plan for a human team working with AI coding/research agents (human-in-the-loop)
-**Version:** 1.1, 14 Nov 2026 (1.1: repository layout completed; P2 start rule clarified in Section 4; GitHub plan note in 3.4; large-file policy in 3.2)
+**Version:** 1.2, 15 Nov 2026 (1.2: literature folder layout, reading rules and intake tools in 3.2 and 3.8; cards T-LIT.00 and T-LIT.03; public repository, individual accounts and drive-only text copies in 3.4. 1.1: repository layout completed; P2 start rule clarified in Section 4; GitHub plan note in 3.4; large-file policy in 3.2)
 **Authoritative inputs:** Synopsis Report (PDF, Oct 2026); Title and Synopsis Defence deck (22 slides, incl. hidden slides 8, 9, 20, 22); FYDP Policy (Aero) Rev 03, Aug 2026; team decisions recorded in Section 1.4
 
 ---
@@ -116,8 +116,13 @@ fydp-haps/
     external/                published datasets (Sky-Sailor, AtlantikSolar, Selig, McGhee) with source notes
     processed/               derived data with the script that produced it
   literature/
+    README.md                reading rules for people and agents (binding)
+    SOURCES_INDEX.md         what each AI-derived or list file is, how to read it, known defects
+    index.csv                one row per drive file: tier, hash, DOI, citekey (duplicates.csv alongside)
+    library.bib              BibTeX exported from Mendeley (never edited by hand)
+    ai_leads.csv             identifiers named by AI files, with an existence check
+    gap_register.csv         AI-claimed research gaps, with verification status
     evidence_register.csv    claim, value, unit, source key, page/figure, quote, status
-    library.bib              BibTeX for every cited source
   src/haps/                  Python package (Section 7 modules)
     atmosphere/ solar/ pv/ aero/ propulsion/ mass/ structures/ energy/
     stability/ cost/ space/ evaluation/ optimisation/ uq/ io/
@@ -149,7 +154,7 @@ fydp-haps/
 - `main` holds only `VERIFIED` work. Each card has its own branch `card/T-P2.07-short-name`.
 - Merge to `main` only after the reviewer approves and CI passes (unit tests, limiting cases, regression tests, lint).
 - Gate tags: `G0`, `G1`, `G2`, `G3` on the `main` commit that the gate approved.
-- Branch protection on a **private** repository needs GitHub Pro, Team or Enterprise (GitHub Free offers it only on public repositories). The repository owner therefore activates GitHub Pro through the GitHub Student Developer Pack before W0 is closed.
+- The repository `FYP-Solar-HAPS/fydp-haps` is **public**, so branch protection is available on GitHub Free. Each team member works from their **own** GitHub account as a collaborator (GitHub's terms do not allow one login to be shared, and a pull request cannot be approved by its own author). The shared account is the owner and is used by one person only. Because the repository is public, text copies of literature files (which contain publisher abstracts) are kept on the shared drive, not in Git.
 
 ### 3.5 Task card template (every card in `cards/` uses this)
 ```
@@ -188,6 +193,9 @@ Review notes:  reviewer's findings, date, decision
 2. **Credibility tiers:** A = peer-reviewed journal/conference, theses, NASA/ESA/agency reports, textbooks; B = preprints, manufacturer datasheets, official programme releases; C = AI-generated summaries, blogs, secondary compilations. **Tier C is never cited**; it is used only to find Tier A/B sources, which are then read directly.
 3. **Extraction** (T-LIT.02 onward, on demand per module): for each equation, constant or dataset a module uses, an evidence-register row with quote and location. A checker agent verifies a random 20 % of rows plus all rows feeding gate-critical results.
 4. **Gap tracking:** where the literature conflicts, both sources are recorded and the choice is justified in the card.
+5. **Layout and tools:** `literature/README.md` defines the drive layout (`papers/`, `ai_derived/{reviews,watch_reports,source_lists,extraction_tables}/`, `team_lists/`, `_not_for_repo/`), the binding reading rules and the intake commands (`python -m haps.io.literature index|copies|leads|gaps`). `literature/SOURCES_INDEX.md` describes each non-paper file and its known defects.
+6. **AI-claimed research gaps** (T-LIT.03) are recorded in `literature/gap_register.csv` as `UNVERIFIED`. A gap becomes `CONFIRMED` only with supporting tier A/B papers **and** a recorded database search showing no paper already fills it. Only `CONFIRMED` gaps may be stated as gaps in reports or the publication.
+7. **Shadow-library material** (download links, mirrors) never enters the repository. Works obtained that way are cited by their published reference (DOI, ISBN).
 
 ---
 
@@ -233,7 +241,9 @@ Card format below is condensed; the full card file in `cards/` follows the Secti
 | T-W0.02 | Environment | Miniforge, Python 3.12, `environment.yml` + lock; install external tools and record versions | `env/` complete; `env/tools.md` | Fresh install on two laptops passes smoke tests (import all packages; run XFOIL, AVL, OpenVSP API, Fluent batch "hello" case) | AR |
 | T-W0.03 | Agent operating brief | Condense Sections 2–3 into `AGENTS.md` / tool-specific instruction files | Agent instruction files | Each agent restates rules correctly in a dry-run card | SU |
 | T-W0.04 | Pre-registration v0 | Transcribe pass rules from deck slide 9 and Section 11 into `acceptance/criteria.yaml` | `criteria.yaml`, tag `criteria-v0` | Team review; every criterion has source and rationale | SU |
-| T-LIT.01 | Literature index | Agents catalogue all supplied literature (3.8 step 1–2) | `literature/index.csv`, `library.bib` | ≥ 95 % entries have DOI or full reference; duplicates merged | AR |
+| T-LIT.00 | Literature intake | Reorganise the drive folder per `literature/README.md` §1.1; run `index`, `copies` (to the drive), `leads`, `gaps`; decide each `duplicates.csv` group; delete the Word lock file; move `Annas sources.txt` to `_not_for_repo/`; export `library.bib` from Mendeley | Drive reorganised and `text_copies/` written on the drive; `index.csv`, `duplicates.csv`, `ai_leads.csv`, `gap_register.csv`, `library.bib` committed | Every drive file has one `index.csv` row; every duplicate group has a decision; no shadow-library link in the repository | SU |
+| T-LIT.01 | Literature index | Agents catalogue all supplied literature (3.8 step 1–2), completing `index.csv` columns (README §7.3) and checking `ai_leads.csv` entries that matter to a module | `literature/index.csv`, `library.bib`, `ai_leads.csv` | ≥ 95 % entries have DOI or full reference; duplicates merged; every paper has tier and citekey | AR |
+| T-LIT.03 | AI-claimed gap verification (runs W1–W4) | For each gap in `gap_register.csv` relevant to this project: read the papers it rests on, run and record a database search, set status (literature README §7.2) | `literature/gap_register.csv` updated | Every gap stated in a report or the publication plan is `CONFIRMED` with a search record | SU |
 | T-REG.01 | Permission application status | Check NUST/CAA application status; record next steps | Note in `reports/permissions.md` | Status recorded | SU |
 | T-REG.02 | Compute access request | Ask the department/supervisor for NUST workstation or cluster time for L2 CFD; confirm Flow360 credits | Written reply recorded in `reports/compute.md` | Decision known by end of W1; L2 budget in Section 10.2 updated | SU |
 

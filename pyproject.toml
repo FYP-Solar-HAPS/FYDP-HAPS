@@ -9,6 +9,10 @@ description = "Design analysis package for the NUST solar-electric HAPS/UAV fina
 requires-python = ">=3.12,<3.13"
 dependencies = []  # filled in T-W0.02 together with env/environment.yml
 
+[project.optional-dependencies]
+# Needed only by haps.io.literature (literature intake, T-LIT.00): pip install -e ".[literature]"
+literature = ["pymupdf>=1.24", "python-docx>=1.1"]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 

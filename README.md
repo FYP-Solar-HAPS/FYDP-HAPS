@@ -53,7 +53,7 @@ Update this table at every gate.
 | `data/raw/` | Downloaded or measured data, never edited by hand |
 | `data/external/` | Published datasets used for validation (Sky-Sailor, AtlantikSolar, Selig, NASA TM-4062), each with a source note |
 | `data/processed/` | Data derived by scripts, with the script that made it |
-| `literature/` | `index.csv`, `evidence_register.csv`, `library.bib` (PDFs are on the shared drive, not here) |
+| `literature/` | Reading rules (`README.md`, binding for people and agents), `SOURCES_INDEX.md`, `index.csv`, `library.bib`, text copies of AI files, `ai_leads.csv`, `gap_register.csv`, `evidence_register.csv`. PDFs and other originals are on the shared drive |
 | `runs/` | One folder per analysis run: `manifest.json`, inputs, small outputs, logs |
 | `cfd/` | CFD case set-ups, journals/scripts, post-processing (meshes and solutions on the shared drive) |
 | `fea/` | FEA set-ups and result summaries |
