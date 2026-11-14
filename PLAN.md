@@ -155,6 +155,7 @@ fydp-haps/
 - Merge to `main` only after the reviewer approves and CI passes (unit tests, limiting cases, regression tests, lint).
 - Gate tags: `G0`, `G1`, `G2`, `G3` on the `main` commit that the gate approved.
 - The repository `FYP-Solar-HAPS/fydp-haps` is **public**, so branch protection is available on GitHub Free. Each team member works from their **own** GitHub account as a collaborator (GitHub's terms do not allow one login to be shared, and a pull request cannot be approved by its own author). The shared account is the owner and is used by one person only. Because the repository is public, text copies of literature files (which contain publisher abstracts) are kept on the shared drive, not in Git.
+- **Set-up exception (W0 only).** Until the other members can review from their own accounts, and no later than gate G0 (Thu 19 Nov), the repository maintainer (currently AR) may merge **set-up** pull requests (repository, environment, literature tooling and registers) once CI passes, without a second approval. Each such card stays `SUBMITTED` with the note "merged under set-up exception" and gets a post-merge review by its named reviewer before G0; any findings are fixed in a new pull request, and only then is the card `VERIFIED`. The exception never covers the agent brief (T-W0.03), pre-registered criteria (T-W0.04), requirements, models or any gate evidence: those always need a second person before merging. Branch protection is switched on when the exception ends.
 
 ### 3.5 Task card template (every card in `cards/` uses this)
 ```
