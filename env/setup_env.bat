@@ -21,6 +21,12 @@ if not exist "%MINIFORGE%\Scripts\activate.bat" (
   goto :fail
 )
 
+REM Keep environments and the package cache in the user's folder, because Miniforge's own folder
+REM may be read-only for this Windows user (installed "for all users").
+set "CONDA_ENVS_DIRS=%USERPROFILE%\.conda\envs"
+set "CONDA_PKGS_DIRS=%USERPROFILE%\.conda\pkgs"
+set "HAPS_PREFIX=%USERPROFILE%\.conda\envs\haps"
+
 REM Go to the repository root (this file lives in env\)
 cd /d "%~dp0.."
 echo Repository: %CD%
@@ -55,7 +61,8 @@ if not errorlevel 1 (
   call conda env remove -n haps --yes || goto :fail
 )
 echo [3/5] Creating the "haps" environment from the lock file. Large download (PyTorch)...
-call conda-lock install -n haps env\conda-lock.yml || goto :fail
+REM Plain conda (not mamba) does the install: it handles a read-only Miniforge folder correctly.
+call conda-lock install --conda "%MINIFORGE%\Scripts\conda.exe" --log-level DEBUG -p "%HAPS_PREFIX%" env\conda-lock.yml || goto :fail
 :skip_rebuild
 
 echo.
