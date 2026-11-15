@@ -31,10 +31,10 @@ Last updated: 15 Nov 2026
 
 | ID | Title | Depends on | Rev | Status | Notes |
 |---|---|---|---|---|---|
-| T-W0.01 | Repository, folder skeleton, CI, branch protection | — | AR | READY | |
-| T-W0.02 | Python 3.12 environment, lock file, external tools installed and versions recorded | T-W0.01 | AR | BLOCKED | |
-| T-W0.03 | Agent operating brief (`AGENTS.md` and tool-specific files) | T-W0.01 | SU | BLOCKED | |
-| T-W0.04 | Pre-registration v0 (`acceptance/criteria.yaml`, tag `criteria-v0`) | T-W0.01 | SU | BLOCKED | |
+| T-W0.01 | Repository, folder skeleton, CI, branch protection | — | AR; SU (post-merge) | SUBMITTED | Merged under set-up exception (initial commit, PR #1). Branch protection on `main` set; approvals at 0 until G0 |
+| T-W0.02 | Python 3.12 environment, lock file, external tools installed and versions recorded | T-W0.01 | AR; SU (post-merge) | IN-PROGRESS | PR #2 (environment file, smoke test, `.gitattributes`). To do: generate `env/conda-lock.yml`; smoke test passing on both laptops; `env/tools.md` filled |
+| T-W0.03 | Agent operating brief (`AGENTS.md` and tool-specific files) | T-W0.01 | SU | SUBMITTED | PR #3; acceptance = dry run per agent (`cards/T-W0.03-dry-run.md`) |
+| T-W0.04 | Pre-registration v0 (`acceptance/criteria.yaml`, tag `criteria-v0`) | T-W0.01 | SU | SUBMITTED | PR #4 (draft); open items listed in the PR; tag `criteria-v0` after approval |
 | T-LIT.00 | Literature intake: drive reorganised, index/copies/leads/gaps run, duplicates decided, `library.bib` exported | T-W0.01 | SU (post-merge) | IN-PROGRESS | Tooling and rules: PR #1, merged under set-up exception. Intake runs still to do. See `literature/README.md` §1, §4, §8 |
 | T-LIT.01 | Literature index and bibliography (complete `index.csv`, check relevant leads) | T-LIT.00 | AR | BLOCKED | |
 | T-LIT.02 | Evidence-register extraction (ongoing, on demand per module) | T-LIT.01 | AR | BLOCKED | Runs through W4 |
@@ -127,5 +127,6 @@ Last updated: 15 Nov 2026
 | Date | Change | By |
 |---|---|---|
 | 14 Nov 2026 | Board created from PLAN.md v1.1 | |
+| 15 Nov 2026 | T-W0.01 → SUBMITTED; T-W0.02 → IN-PROGRESS (PR #2); T-W0.03 → SUBMITTED (PR #3); T-W0.04 → SUBMITTED (PR #4) | |
 | 15 Nov 2026 | Set-up exception added (PLAN.md §3.4): maintainer merges W0 set-up PRs after CI; named reviewer reviews after merge, before G0 | |
 | 15 Nov 2026 | Added T-LIT.00 (literature intake) and T-LIT.03 (gap verification); T-LIT.01 now depends on T-LIT.00 (PLAN.md v1.2) | |
