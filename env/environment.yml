@@ -1,0 +1,69 @@
+# Conda environment for the HAPS FYDP (card T-W0.02, PLAN.md §3.3).
+#
+# This file lists WHAT is installed. Exact versions are fixed by the lock file
+# env/conda-lock.yml, generated from this file (see env/README.md). Install from the
+# lock file, not from this file, so both laptops and CI get identical versions.
+#
+# Python is pinned to 3.12 (PLAN.md §3.3: 3.14 is not used; earlier NumPy failures on
+# Windows came from it).
+name: haps
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.12
+  - pip
+
+  # Core numerics and data
+  - numpy
+  - scipy
+  - pandas
+  - xarray
+  - netcdf4
+  - pyarrow            # Parquet storage of screening results (PLAN §8.5)
+  - numba
+  - matplotlib
+
+  # Testing, quality, schemas, units
+  - pytest
+  - hypothesis
+  - ruff
+  - pydantic           # input schemas
+  - pint               # unit tests of boundary conversions only (PLAN §2 rule 5)
+  - pyyaml             # acceptance/criteria.yaml, run manifests
+  - rich
+  - jupyterlab
+
+  # Solar resource and weather data
+  - pvlib-python       # NREL SPA solar position, transposition (verification reference)
+  - cdsapi             # ERA5 (Copernicus Climate Data Store)
+  - earthaccess        # MERRA-2 (NASA Earthdata)
+  - requests           # NASA POWER API
+
+  # Surrogates, optimisation, uncertainty
+  - scikit-learn
+  - statsmodels
+  - pytorch            # BoTorch/GPyTorch backend; GPU use checked by env/check_env.py
+  - gpytorch
+  - botorch
+  - ax-platform
+  - salib
+  - chaospy
+  - ortools-python     # CP-SAT feasibility of discrete combinations (PLAN §12.2)
+  - openmdao
+
+  # Literature tools (haps.io.literature)
+  - pymupdf
+  - python-docx
+
+  # Lock-file generation
+  - conda-lock
+
+  # Packages not on conda-forge, or whose conda-forge builds lag: installed by pip
+  # inside this environment. conda-lock pins these too.
+  - pip:
+      - aerosandbox        # L0/L1 aerodynamics; brings NeuralFoil
+      - neuralfoil
+      - openaerostruct     # aerostructural wing refinement (P5)
+      - pymoo              # NSGA-II/III, GA, PSO
+      - smt                # mixed-variable GP and multi-fidelity co-kriging
