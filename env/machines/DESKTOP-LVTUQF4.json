@@ -1,0 +1,243 @@
+{
+  "machine": "DESKTOP-LVTUQF4",
+  "created_utc": "2026-11-15T13:57:53+00:00",
+  "python": "3.12.16",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "checks": [
+    {
+      "name": "numpy",
+      "ok": true,
+      "version": "2.5.4",
+      "detail": ""
+    },
+    {
+      "name": "scipy",
+      "ok": true,
+      "version": "1.18.1",
+      "detail": ""
+    },
+    {
+      "name": "pandas",
+      "ok": true,
+      "version": "3.1.1",
+      "detail": ""
+    },
+    {
+      "name": "xarray",
+      "ok": true,
+      "version": "2026.9.0",
+      "detail": ""
+    },
+    {
+      "name": "netcdf4",
+      "ok": true,
+      "version": "1.7.5",
+      "detail": ""
+    },
+    {
+      "name": "pyarrow",
+      "ok": true,
+      "version": "26.0.1",
+      "detail": ""
+    },
+    {
+      "name": "numba",
+      "ok": true,
+      "version": "0.68.1",
+      "detail": ""
+    },
+    {
+      "name": "matplotlib",
+      "ok": true,
+      "version": "3.11.2",
+      "detail": ""
+    },
+    {
+      "name": "pytest",
+      "ok": true,
+      "version": "9.2.0",
+      "detail": ""
+    },
+    {
+      "name": "hypothesis",
+      "ok": true,
+      "version": "6.170.15",
+      "detail": ""
+    },
+    {
+      "name": "pydantic",
+      "ok": true,
+      "version": "2.14.3",
+      "detail": ""
+    },
+    {
+      "name": "pint",
+      "ok": true,
+      "version": "0.26.2",
+      "detail": ""
+    },
+    {
+      "name": "pyyaml",
+      "ok": true,
+      "version": "6.0.3",
+      "detail": ""
+    },
+    {
+      "name": "rich",
+      "ok": true,
+      "version": "",
+      "detail": ""
+    },
+    {
+      "name": "pvlib-python",
+      "ok": true,
+      "version": "0.16.1",
+      "detail": ""
+    },
+    {
+      "name": "cdsapi",
+      "ok": true,
+      "version": "",
+      "detail": ""
+    },
+    {
+      "name": "earthaccess",
+      "ok": true,
+      "version": "0.19.0",
+      "detail": ""
+    },
+    {
+      "name": "requests",
+      "ok": true,
+      "version": "2.34.2",
+      "detail": ""
+    },
+    {
+      "name": "scikit-learn",
+      "ok": true,
+      "version": "1.9.1",
+      "detail": ""
+    },
+    {
+      "name": "statsmodels",
+      "ok": true,
+      "version": "0.15.0",
+      "detail": ""
+    },
+    {
+      "name": "pytorch",
+      "ok": true,
+      "version": "2.14.1",
+      "detail": ""
+    },
+    {
+      "name": "gpytorch",
+      "ok": true,
+      "version": "1.15.2",
+      "detail": ""
+    },
+    {
+      "name": "botorch",
+      "ok": true,
+      "version": "0.17.2",
+      "detail": ""
+    },
+    {
+      "name": "ax-platform",
+      "ok": true,
+      "version": "",
+      "detail": ""
+    },
+    {
+      "name": "salib",
+      "ok": true,
+      "version": "",
+      "detail": ""
+    },
+    {
+      "name": "chaospy",
+      "ok": true,
+      "version": "4.3.20",
+      "detail": ""
+    },
+    {
+      "name": "openmdao",
+      "ok": true,
+      "version": "3.45.2",
+      "detail": ""
+    },
+    {
+      "name": "pymupdf",
+      "ok": true,
+      "version": "2.1",
+      "detail": ""
+    },
+    {
+      "name": "python-docx",
+      "ok": true,
+      "version": "1.2.0",
+      "detail": ""
+    },
+    {
+      "name": "aerosandbox",
+      "ok": true,
+      "version": "4.2.10",
+      "detail": ""
+    },
+    {
+      "name": "neuralfoil",
+      "ok": true,
+      "version": "0.3.3",
+      "detail": ""
+    },
+    {
+      "name": "openaerostruct",
+      "ok": true,
+      "version": "2.12.1",
+      "detail": ""
+    },
+    {
+      "name": "pymoo",
+      "ok": true,
+      "version": "0.6.2",
+      "detail": ""
+    },
+    {
+      "name": "smt",
+      "ok": true,
+      "version": "2.15.1",
+      "detail": ""
+    },
+    {
+      "name": "torch GPU",
+      "ok": true,
+      "version": "",
+      "detail": "CUDA not available: running on CPU (see env/README.md)"
+    },
+    {
+      "name": "XFOIL",
+      "ok": true,
+      "version": "6.99",
+      "detail": "NACA 0012, Re 1e6, alpha 2 deg: CL = 0.2144"
+    },
+    {
+      "name": "AVL",
+      "ok": true,
+      "version": "3.52",
+      "detail": "banner read"
+    },
+    {
+      "name": "OpenVSP API",
+      "ok": false,
+      "version": "",
+      "detail": "exit 1: ModuleNotFoundError: No module named 'openvsp'"
+    },
+    {
+      "name": "Fluent",
+      "ok": true,
+      "version": "2026",
+      "detail": "batch start and exit OK (licence checked out)"
+    }
+  ],
+  "ok": false
+}
