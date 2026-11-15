@@ -6,7 +6,7 @@ REM  Optional: env\setup_env.bat --fluent   (also launches Fluent once)
 REM
 REM  What it does:
 REM   1. finds Miniforge (MINIFORGE below, or the usual install folders)
-REM   2. installs conda-lock into Miniforge's base environment
+REM   2. installs conda-lock into a small "haps-tools" environment (base is never modified)
 REM   3. creates env\conda-lock.yml from env\environment.yml if it does not exist yet
 REM   4. (re)creates the "haps" environment from the lock file
 REM   5. installs this repository's package, runs the tests and the smoke test
@@ -28,8 +28,14 @@ echo Miniforge:  %MINIFORGE%
 call "%MINIFORGE%\Scripts\activate.bat" "%MINIFORGE%" || goto :fail
 
 echo.
-echo [1/5] Installing conda-lock into the base environment...
-call conda install -n base -c conda-forge --yes conda-lock || goto :fail
+echo [1/5] Preparing conda-lock in a small tools environment "haps-tools"...
+REM Miniforge's base folder may be read-only for your Windows user (installed "for all users").
+REM Nothing is written there: new environments go to your user folder automatically.
+call conda env list | findstr /r /c:"^haps-tools " >nul
+if errorlevel 1 (
+  call conda create -n haps-tools -c conda-forge --override-channels --yes conda-lock || goto :fail
+)
+call conda activate haps-tools || goto :fail
 
 echo.
 if exist "env\conda-lock.yml" (

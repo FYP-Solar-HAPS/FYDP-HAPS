@@ -12,7 +12,8 @@ Everything needed to reproduce results on both laptops and in CI (PLAN.md §3.3,
 ## 0. Quickest way (Windows): `env\setup_env.bat`
 
 Double-click `env\setup_env.bat` (or run it in Command Prompt). It does sections 1–4 below in
-order: installs conda-lock, creates `env\conda-lock.yml` if missing, builds the `haps`
+order: installs conda-lock (into a small `haps-tools` environment, so Miniforge's base folder is
+never written to, even if it is read-only), creates `env\conda-lock.yml` if missing, builds the `haps`
 environment from it, installs the package, runs the tests and the smoke test. It looks for
 Miniforge in `D:\Miniforge` and the default install folders; edit the `MINIFORGE` line if yours
 is elsewhere. Use Miniforge only; do not mix with Anaconda.
