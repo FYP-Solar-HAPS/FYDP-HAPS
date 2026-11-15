@@ -58,7 +58,6 @@ Install each program listed in `tools.md`, then tell the project where it is. In
 ```
 setx HAPS_XFOIL "C:\Tools\XFOIL6.99\xfoil.exe"
 setx HAPS_AVL "C:\Tools\AVL\avl.exe"
-setx HAPS_OPENVSP_PYTHON "C:\Tools\OpenVSP-<version>\python"
 setx HAPS_FLUENT "C:\Program Files\ANSYS Inc\v<release>\fluent\ntbin\win64\fluent.exe"
 setx HAPS_DATA "D:\ATEEQ\Ateeq work\Google Drive\FYDP-HAPS-data"
 ```
@@ -82,6 +81,20 @@ T-W0.02 passes when both laptops show every check `PASS` and `tools.md` records 
 If a surrogate job later needs the RTX 3050, open a card to add a CUDA build to the lock
 (conda-lock virtual-package specification); do not `pip install` a different torch into `haps`.
 
-**OpenVSP.** The OpenVSP download contains a `python` folder with the `openvsp` package, built
-for one Python version. If it is not built for 3.12, record that in `tools.md` and use OpenVSP's
-own Python (or the GUI) for geometry export until a matching build is available.
+**OpenVSP (separate environment).** OpenVSP's Windows Python API is built only for Python 3.11
+and 3.13 (OpenVSP 3.56.0 has no 3.12 build), so it lives in its own small environment
+`haps-vsp` (`env/vsp-environment.yml`, Python 3.13). Geometry scripts run there and write
+files that the `haps` environment reads. Once per laptop, in Miniforge Prompt (use your own
+OpenVSP folder; download the **Python 3.13** Windows build from openvsp.org):
+
+```
+conda env create -f env\vsp-environment.yml
+conda activate haps-vsp
+pip install -e "D:\OpenVSP\OpenVSP-3.56.0-win64-Python3.13\OpenVSP-3.56.0-win64\python\openvsp_config"
+pip install -e "D:\OpenVSP\OpenVSP-3.56.0-win64-Python3.13\OpenVSP-3.56.0-win64\python\openvsp"
+conda deactivate
+```
+
+The smoke test finds `haps-vsp` in `%USERPROFILE%\.conda\envs\` automatically; if it is elsewhere,
+`setx HAPS_VSP_PYTHON "<path>\python.exe"`. Never install `openvsp` into `haps`.
+

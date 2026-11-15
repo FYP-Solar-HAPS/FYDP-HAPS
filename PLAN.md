@@ -148,6 +148,7 @@ fydp-haps/
 - **Python 3.12** from conda-forge (Miniforge), pinned in `env/environment.yml` with an exact lock file. Python 3.14 is not used: earlier NumPy failures on Windows came from it.
 - Core packages: numpy, scipy, pandas, xarray, numba, matplotlib, pytest, hypothesis, pydantic (input schemas), pint (unit tests of conversions only), pvlib, aerosandbox (includes NeuralFoil), pymoo, scikit-learn, smt, botorch/gpytorch/ax-platform, SALib, chaospy, statsmodels, openmdao + openaerostruct, cdsapi, earthaccess, requests (NASA POWER API), pyyaml, rich, jupyter.
 - External executables, versions recorded in `env/tools.md`: XFOIL 6.99, AVL 3.40 (or latest), XFLR5/flow5, VORLAX, OpenVSP (with Python API), ANSYS Fluent and Mechanical (version recorded), OpenFOAM (v2406+ or OpenFOAM.org 12, recorded), Tecplot, SolidWorks, nTop, ArduPilot SITL (needed later, P9).
+- **OpenVSP Python API** runs in a separate environment `haps-vsp` (Python 3.13, `env/vsp-environment.yml`) because OpenVSP's Windows builds of its Python API exist only for Python 3.11 and 3.13. Geometry is exchanged with the main environment through files (.vsp3, STEP, DegenGeom CSV), never by import.
 - GPU (RTX 3050) is used for PyTorch-based surrogates (BoTorch, NeuralFoil batches); CFD runs on CPU.
 
 ### 3.4 Branching and merge rules
