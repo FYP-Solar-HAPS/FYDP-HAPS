@@ -9,6 +9,20 @@ Everything needed to reproduce results on both laptops and in CI (PLAN.md §3.3,
 | `tools.md` | External programs (XFOIL, AVL, OpenVSP, Fluent, …): required version, installed version per laptop, where to get them | Team |
 | `machines/<laptop>.json` | Smoke-test report from each laptop (`python -m haps.io.envcheck`) | Generated |
 
+## 0. Quickest way (Windows): `env\setup_env.bat`
+
+Double-click `env\setup_env.bat` (or run it in Command Prompt). It does sections 1–4 below in
+order: installs conda-lock, creates `env\conda-lock.yml` if missing, builds the `haps`
+environment from it, installs the package, runs the tests and the smoke test. It looks for
+Miniforge in `D:\Miniforge` and the default install folders; edit the `MINIFORGE` line if yours
+is elsewhere. Use Miniforge only; do not mix with Anaconda.
+
+**Why `conda` "is not recognised" or "environment.yml not found":** a normal terminal does not
+know about conda unless Miniforge was added to PATH (use Miniforge Prompt, or run
+`D:\Miniforge\Scripts\conda.exe init cmd.exe powershell` once and reopen the terminal). Miniforge
+Prompt starts in your user folder, so first change to the repository: on another drive this needs
+`/d` and quotes, e.g. `cd /d "D:\ATEEQ\Ateeq work\FYP\FYDP-HAPS"`.
+
 ## 1. One-time: create the lock file (maintainer, once)
 
 In **Miniforge Prompt**, from the repository folder:
