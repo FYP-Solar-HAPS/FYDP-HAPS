@@ -1,0 +1,239 @@
+# Pre-registered pass rules (card T-W0.04, PLAN.md §2 rule 2 and §11).
+#
+# STATUS: DRAFT for criteria-v0. Becomes criteria-v0 only when the team has reviewed it in a pull
+# request (a second person approves) and the merge commit is tagged `criteria-v0`. From then on
+# nothing here is edited: a change is a new version (criteria-v1, ...) with a written reason in
+# `changes` and team sign-off, committed BEFORE the runs it judges.
+#
+# Sources: deck slide 9 ("Pass/fail criteria", AE-FYDP Title and Synopsis Defence) and PLAN.md
+# §11. Every criterion states its source and rationale. Where the plan does not yet fix a number,
+# the field says TBD and names the card and date by which it must be fixed; a TBD criterion cannot
+# judge any run.
+#
+# Field meanings:
+#   check        what is compared
+#   pass_rule    the rule in words and symbols
+#   tolerance    machine-readable part (type: absolute | relative | probability | rule | TBD)
+#   applies_to   modules or deliverables judged by it
+#   gate         first gate that relies on it
+#   source       where the rule or reference data come from; `location` = page/table/figure
+#   rationale    why this threshold
+#   open_items   what must be settled before the tag (or before first use, if marked)
+
+schema_version: 1
+criteria_version: v0
+status: DRAFT
+prepared: 2026-11-15
+prepared_by: AI-drafted from PLAN.md §11 and deck slide 9; to be reviewed by SU (T-W0.04)
+
+criteria:
+
+  # ---------------------------------------------------------------- verification (code is right)
+  V-ISA:
+    category: verification
+    check: ISA temperature, pressure and density from the atmosphere module vs ICAO standard tables, 0-25 km
+    pass_rule: "|model - table| / table <= 0.1 % at every tabulated altitude, for T, p and rho"
+    tolerance: {type: relative, value: 0.001}
+    applies_to: [atmosphere]
+    gate: G1
+    source: {ref: "ICAO Doc 7488/3, Manual of the ICAO Standard Atmosphere (1993)", location: TBD}
+    rationale: >-
+      The tables are printed to about five significant figures; 0.1 % is far larger than their
+      rounding but small enough to catch a wrong constant, lapse rate or layer boundary.
+    open_items: [Record the table numbers used and the altitudes compared.]
+
+  V-SUN:
+    category: verification
+    check: Solar zenith and azimuth angles from the solar module vs NREL SPA (pvlib), Islamabad, a full year at 5-min steps
+    pass_rule: "max |angle_model - angle_SPA| <= 0.05 deg"
+    tolerance: {type: absolute, value: 0.05, unit: deg}
+    applies_to: [solar]
+    gate: G1
+    source: {ref: "Reda & Andreas, NREL/TP-560-34302 (2004, rev. 2008)", location: abstract (SPA uncertainty +/-0.0003 deg)}
+    rationale: >-
+      An angle error d(theta) changes irradiance on a surface by about tan(theta) * d(theta) in
+      relative terms: at 0.05 deg (8.7e-4 rad) this is <= 0.15 % up to theta = 60 deg, negligible
+      against other energy-model uncertainties.
+    open_items:
+      - "Decide whether V-SUN applies to Pipeline A as written: textbook declination/equation-of-time
+        approximations may exceed 0.05 deg. Either Pipeline A uses SPA for geometry, or it gets its
+        own declared tolerance with the resulting irradiance error stated (decide before tag)."
+
+  V-LL:
+    category: verification
+    check: Lifting-line span efficiency and induced-drag factor vs classical results
+    pass_rule: "elliptic planform: |e - 1| <= 1e-6; rectangular wing: |delta - delta_ref| within the reading uncertainty of the cited figure, delta_ref = 0.048 (AR 6), 0.086 (AR 10)"
+    tolerance: {type: absolute, value_elliptic: 1.0e-6, value_rectangular: TBD}
+    applies_to: [aero]
+    gate: G1
+    source: {ref: "Anderson, Fundamentals of Aerodynamics, 6th ed. (2017)", location: TBD}
+    rationale: >-
+      An elliptic lift distribution gives e = 1 exactly in lifting-line theory, so only numerical
+      error is allowed. The rectangular-wing values test the general Glauert solution.
+    open_items:
+      - "Confirm delta = 0.048 and 0.086 and their figure/table in Anderson (or Glauert's original);
+        if read from a figure, set the tolerance to the figure-reading uncertainty (before tag)."
+
+  V-BEAM:
+    category: verification
+    check: Beam module tip deflection and first bending frequency vs analytic solutions (cantilever, uniform section)
+    pass_rule: "deflection error <= 0.1 %; first-frequency error <= 0.5 %"
+    tolerance: {type: relative, deflection: 0.001, frequency: 0.005}
+    applies_to: [structures]
+    gate: G1
+    source: {ref: "Standard closed-form beam solutions (e.g. Roark's Formulas for Stress and Strain)", location: TBD}
+    rationale: >-
+      Closed-form answers are exact for the test case; the tolerances allow discretisation error
+      while catching wrong boundary conditions or section properties.
+    open_items: [Name the text, edition and the formulas used (case numbers).]
+
+  V-ENERGY:
+    category: verification
+    check: Energy-balance module with zero load, zero irradiance and lossless conversions over 24 h
+    pass_rule: "|SoC(t0 + 24 h) - SoC(t0)| <= 1e-12 (float64)"
+    tolerance: {type: absolute, value: 1.0e-12}
+    applies_to: [energy]
+    gate: G1
+    source: {ref: "Conservation of energy; float64 machine precision (IEEE 754)", location: n/a}
+    rationale: >-
+      With nothing flowing in or out, stored energy must not change; anything above round-off
+      (288 steps of about 1e-16 each) is a bookkeeping error.
+    open_items: []
+
+  VER-GCI:
+    category: verification
+    check: Mesh convergence of CFD integrated forces (C_L, C_D) on three systematically refined meshes
+    pass_rule: "GCI_fine reported for C_L and C_D (Celik et al. 2008 procedure, safety factor 1.25); convergence monotonic (0 < R < 1), or oscillatory with the declared treatment; GCI_fine applied as u_num"
+    tolerance: {type: rule}
+    applies_to: [cfd]
+    gate: G1
+    source:
+      - {ref: "Roache, J. Fluids Eng. 116(3):405-413 (1994)", location: TBD}
+      - {ref: "Celik et al., J. Fluids Eng. 130(7):078001 (2008)", location: procedure steps 1-5}
+    rationale: The standard, journal-required way to estimate and report discretisation uncertainty.
+    open_items: [Refinement ratio (>= 1.3 per Celik et al.) and the treatment of oscillatory convergence (before T-CFD.02 runs).]
+
+  # ---------------------------------------------------------------- validation (model is right)
+  VAL-A:
+    category: validation
+    check: Tier-A aircraft (Sky-Sailor, AtlantikSolar) - simulated quantity S vs published data D
+    pass_rule: "|S - D| <= 2 u_val, u_val^2 = u_num^2 + u_input^2 + u_D^2"
+    tolerance: {type: rule, coverage_factor: 2}
+    applies_to: [energy, aero, mass, pv, sizing]
+    gate: G1
+    source:
+      - {ref: "ASME V&V 20-2009", location: validation comparison error and u_val}
+      - {ref: "Deck slide 9", location: "G1 row"}
+    rationale: k = 2 gives about 95 % coverage for a normal comparison error (deck slide 9).
+    open_items:
+      - "List the compared quantities and their data sources with pages (Noth 2008; Oettershagen et al. 2017), e.g. AtlantikSolar cruise power and minimum SoC (T-P2.15, before it runs)."
+
+  VAL-B:
+    category: validation
+    check: Tier-B aircraft (Zephyr, PHASA-35, Helios) - published performance points
+    pass_rule: "published point inside the model's 95 % prediction band; hold-out: never used to tune any parameter"
+    tolerance: {type: probability, band: 0.95}
+    applies_to: [sizing, energy]
+    gate: G1
+    source: {ref: "Deck slide 9", location: "G1 row"}
+    rationale: Published data for these aircraft are incomplete, so only plausibility is tested; hold-out keeps the test honest.
+    open_items: [Name the points and their sources (T-P2.15, before it runs).]
+
+  VAL-AF:
+    category: validation
+    check: E387 airfoil - 2D RANS with transition and polar tools vs NASA TM-4062 measurements
+    pass_rule: "C_l, C_d and laminar-separation / reattachment locations inside declared bands at the declared Re and alpha"
+    tolerance: {type: TBD}
+    applies_to: [cfd, aero]
+    gate: G1
+    source: {ref: "McGhee, Walker & Millard, NASA TM-4062 (1988)", location: TBD}
+    rationale: The standard low-Reynolds-number validation case with transition, matching DM Re of about 1e5.
+    open_items:
+      - "BLOCKING for T-CFD.02: declare Re, alpha set and the bands on C_l, C_d and x_sep/x_reattach
+        in a new criteria version before any E387 run."
+
+  # ---------------------------------------------------------------- hypotheses and decisions
+  H1:
+    category: hypothesis
+    check: Full-scale (FS) 24-h energy closure at 20 km over Islamabad
+    pass_rule: "P[E_bat(t0 + 24 h) >= E_bat(t0), SoC_dawn >= 10 %, V_TAS >= V_wind,95] >= 0.95 on the vernal equinox; closure window reported for every day of the year"
+    tolerance: {type: probability, value: 0.95}
+    applies_to: [energy, sizing, evaluation]
+    gate: G2
+    source: {ref: "Deck slide 9", location: "H1 row"}
+    rationale: >-
+      Equinox: 12-h day at every latitude, mid-point of the annual cycle. 10 % floor protects cycle
+      life. V_wind,95 = 95th-percentile wind from ERA5 at 50 hPa over Islamabad (deck slide 9).
+    open_items: [Name the ERA5 period used for V_wind,95 (T-P2 solar/wind card).]
+
+  H2:
+    category: hypothesis
+    check: Demonstrator (DM) data transfer to FS predictions (tested after the defence, P9-P10)
+    pass_rule: "(a) |P_meas - P_pred| <= 2 u_c per test point; (b) >= 95 % of held-out sorties inside the 95 % prediction band; (c) sigma_post / sigma_prior <= 0.5 for C_D0, e, eta_prop"
+    tolerance: {type: rule}
+    applies_to: [calibration]
+    gate: G5
+    source:
+      - {ref: "Deck slide 9", location: "H2 row"}
+      - {ref: "JCGM 100:2008 (GUM)", location: combined standard uncertainty u_c}
+    rationale: GUM combined uncertainty; leave-one-sortie-out coverage; (c) shows the data identify the parameters (>= 75 % variance reduction).
+    open_items: [Not used before the defence; registered now so the G3 freeze can be checked against it.]
+
+  H3:
+    category: hypothesis
+    check: Robustness of the selected baseline (U1)
+    pass_rule: "P(baseline in top set) >= 0.95 under AHP-consistent weight sampling (CR < 0.10) and input scatter; top set = scores within 2 sigma of the best"
+    tolerance: {type: probability, value: 0.95}
+    applies_to: [evaluation, uq]
+    gate: G2
+    source:
+      - {ref: "Deck slide 9", location: "H3 row"}
+      - {ref: "Lahdelma, Hokkanen & Salminen, Eur. J. Oper. Res. 106 (1998)", location: SMAA rank acceptability}
+    rationale: Rank-acceptability analysis at the same 95 % level as the other probabilistic rules.
+    open_items: [Define sigma in "within 2 sigma" (score standard deviation across samples) before U1 runs.]
+
+  H4:
+    category: hypothesis
+    check: Modularity of the payload bay (CAD, interfaces, bench; after the defence)
+    pass_rule: "static margin 5-15 % MAC with either payload head (target 10 %); swap <= 10 min, no rewiring; a payload-rail fault cannot drop the avionics bus"
+    tolerance: {type: rule, static_margin_min: 0.05, static_margin_max: 0.15}
+    applies_to: [stability, payload]
+    gate: G3
+    source: {ref: "Deck slide 9", location: "H4 row"}
+    rationale: Standard stability band; a swap must fit inside a battery turnaround; fault isolation shown on the bench.
+    open_items: [The static-margin part is checked at G3 for both heads; the rest after the defence.]
+
+  OPT:
+    category: decision
+    check: Optimality of the frozen baseline
+    pass_rule: "baseline non-dominated (Pareto-optimal) at L2; no Tier-2 margin traded below its threshold to gain a Tier-3 score"
+    tolerance: {type: rule}
+    applies_to: [optimisation, evaluation]
+    gate: G3
+    source: {ref: "Deck slide 9", location: "Optimality note"}
+    rationale: Protects safety and performance margins from being spent on lower-priority scores.
+    open_items: []
+
+  SURR:
+    category: admission
+    check: Admission of any surrogate or machine-learning model before its outputs are used for decisions
+    pass_rule: "on held-out data: empirical coverage of the nominal 95 % interval >= 0.90, and RMSE <= f x (output range), f declared per output"
+    tolerance: {type: rule, coverage_min: 0.90, rmse_fraction: TBD}
+    applies_to: [surrogates, optimisation, neuralfoil]
+    gate: G2
+    source: {ref: "PLAN.md §8.6 and §11 (team decision)", location: "SURR row"}
+    rationale: A surrogate must be both accurate and honest about its uncertainty before it can screen or rank candidates.
+    open_items: ["BLOCKING before first surrogate use: declare f per output (e.g. 0.05) with reasoning."]
+
+  MC:
+    category: statistics
+    check: Monte Carlo sample size for any probability estimate
+    pass_rule: "sigma_p = sqrt(p (1 - p) / N) <= 0.01, i.e. N >= 2,500 for any p"
+    tolerance: {type: absolute, value: 0.01}
+    applies_to: [uq, evaluation, energy]
+    gate: G2
+    source: {ref: "Deck slide 9", location: "Monte Carlo size note"}
+    rationale: The binomial standard error is largest at p = 0.5 (0.25 / N), so N >= 2,500 bounds it by 0.01 for every p; Sobol sequences converge faster than random sampling.
+    open_items: []
+
+changes: []   # one entry per new version: {version, date, criterion, change, reason, approved_by}
