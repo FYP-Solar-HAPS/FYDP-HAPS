@@ -49,7 +49,6 @@ dependencies:
   - ax-platform
   - salib
   - chaospy
-  - ortools-python     # CP-SAT feasibility of discrete combinations (PLAN §12.2)
   - openmdao
 
   # Literature tools (haps.io.literature)
@@ -67,3 +66,4 @@ dependencies:
       - openaerostruct     # aerostructural wing refinement (P5)
       - pymoo              # NSGA-II/III, GA, PSO
       - smt                # mixed-variable GP and multi-fidelity co-kriging
+      - ortools            # CP-SAT feasibility (PLAN §12.2); conda-forge has no win-64 or py3.12 build
