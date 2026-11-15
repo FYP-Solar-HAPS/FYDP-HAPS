@@ -7,11 +7,15 @@ name = "haps"
 version = "0.0.1"
 description = "Design analysis package for the NUST solar-electric HAPS/UAV final year design project"
 requires-python = ">=3.12,<3.13"
-dependencies = []  # filled in T-W0.02 together with env/environment.yml
+# Runtime packages come from the conda environment (env/environment.yml + env/conda-lock.yml).
+# The lists below exist only so CI and quick installs can run the tests without conda.
+dependencies = []
 
 [project.optional-dependencies]
 # Needed only by haps.io.literature (literature intake, T-LIT.00): pip install -e ".[literature]"
 literature = ["pymupdf>=1.24", "python-docx>=1.1"]
+# Test and lint tools used by CI: pip install -e ".[dev]"
+dev = ["pytest>=8", "ruff>=0.6", "pyyaml>=6"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
