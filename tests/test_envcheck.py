@@ -3,6 +3,7 @@
 from haps.io.envcheck import (
     PACKAGES,
     parse_avl_version,
+    parse_vsp_hello,
     parse_xfoil_cl,
     parse_xfoil_version,
 )
@@ -41,3 +42,9 @@ def test_package_list_matches_environment_file():
     text = env.read_text(encoding="utf-8")
     missing = [dist for dist in PACKAGES.values() if dist not in text]
     assert not missing, f"in envcheck.PACKAGES but not in environment.yml: {missing}"
+
+
+def test_vsp_hello_parser():
+    out = "VSPVERSION OpenVSP 3.56.0\nNGEOMS 1\n"
+    assert parse_vsp_hello(out) == ("OpenVSP 3.56.0", 1)
+    assert parse_vsp_hello("Traceback ... ImportError") == ("", None)

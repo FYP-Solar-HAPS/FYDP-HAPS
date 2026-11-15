@@ -1,0 +1,17 @@
+# Separate environment for the OpenVSP Python API only (card T-W0.02).
+#
+# OpenVSP's Windows downloads ship the Python API built for Python 3.11 or 3.13 only (no 3.12
+# build of 3.56.0), so it cannot load inside the main `haps` environment (Python 3.12).
+# Geometry scripts run here and write files (.vsp3, STEP, DegenGeom CSV) that the `haps`
+# environment reads. Numerical results are never computed in this environment.
+#
+# The `openvsp` and `openvsp_config` packages come from the OpenVSP download (env/README.md §3);
+# record the OpenVSP version in env/tools.md.
+name: haps-vsp
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.13
+  - numpy
+  - pip

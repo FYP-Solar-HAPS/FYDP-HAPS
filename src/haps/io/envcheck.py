@@ -14,8 +14,9 @@ Where the tools are found (first match wins):
 
 * XFOIL:   environment variable ``HAPS_XFOIL`` (full path to xfoil.exe), else ``xfoil`` on PATH
 * AVL:     ``HAPS_AVL`` (full path to avl.exe), else ``avl`` on PATH
-* OpenVSP: ``HAPS_OPENVSP_PYTHON`` (folder containing the ``openvsp`` Python package that
-           ships with the OpenVSP download), else an already-installed ``openvsp`` package
+* OpenVSP: ``HAPS_VSP_PYTHON`` (python.exe of the separate ``haps-vsp`` environment, because
+           OpenVSP's Windows Python API is only built for Python 3.11 and 3.13), else
+           ``%USERPROFILE%/.conda/envs/haps-vsp/python.exe``
 * Fluent:  ``HAPS_FLUENT`` (full path to fluent.exe), else ``fluent`` on PATH
 
 The card's acceptance test is this script passing on both laptops (PLAN.md §5.1).
@@ -193,23 +194,50 @@ def check_avl() -> Check:
                  detail="banner read" if version else f"banner not recognised (exit {code})")
 
 
+VSP_HELLO = (
+    "import openvsp as vsp\n"
+    "print('VSPVERSION', vsp.GetVSPVersion())\n"
+    "vsp.VSPRenew()\n"
+    "vsp.AddGeom('WING')\n"
+    "print('NGEOMS', len(vsp.FindGeoms()))\n"
+)
+
+
+def parse_vsp_hello(output: str) -> tuple[str, int | None]:
+    """Return (version text, number of geometries) printed by the OpenVSP hello script."""
+    version = re.search(r"VSPVERSION\s+(.+)", output)
+    count = re.search(r"NGEOMS\s+(\d+)", output)
+    return (version.group(1).strip() if version else "",
+            int(count.group(1)) if count else None)
+
+
+def vsp_python() -> str | None:
+    """python.exe of the haps-vsp environment (OpenVSP API), or None if not found."""
+    configured = os.environ.get("HAPS_VSP_PYTHON", "").strip().strip('"')
+    if configured:
+        return configured if Path(configured).is_file() else None
+    default = Path(os.environ.get("USERPROFILE", str(Path.home()))) / ".conda" / "envs" / "haps-vsp"
+    for candidate in (default / "python.exe", default / "bin" / "python"):
+        if candidate.is_file():
+            return str(candidate)
+    return None
+
+
 def check_openvsp() -> Check:
-    extra = os.environ.get("HAPS_OPENVSP_PYTHON", "").strip().strip('"')
-    if extra and extra not in sys.path:
-        sys.path.insert(0, extra)
-    try:
-        import openvsp as vsp  # type: ignore[import-not-found]
-    except Exception as exc:  # noqa: BLE001
+    exe = vsp_python()
+    if exe is None:
         return Check("OpenVSP API", False,
-                     detail=f"import failed ({exc.__class__.__name__}); set HAPS_OPENVSP_PYTHON")
+                     detail="haps-vsp environment not found: see env/README.md section 3")
     try:
-        version = str(vsp.GetVSPVersion())
-        vsp.VSPRenew()
-        vsp.AddGeom("WING")  # hello case: create one wing in memory
-        n = len(vsp.FindGeoms())
-    except Exception as exc:  # noqa: BLE001
-        return Check("OpenVSP API", False, detail=f"API call failed: {exc}")
-    return Check("OpenVSP API", n == 1, version=version, detail=f"created {n} wing geometry")
+        code, out = run([exe, "-c", VSP_HELLO], timeout=120)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return Check("OpenVSP API", False, detail=f"run failed: {exc}")
+    version, n = parse_vsp_hello(out)
+    if code != 0 or n is None:
+        last = out.strip().splitlines()[-1] if out.strip() else "no output"
+        return Check("OpenVSP API", False, version=version, detail=f"exit {code}: {last[:120]}")
+    return Check("OpenVSP API", n == 1, version=version,
+                 detail=f"created {n} wing geometry (haps-vsp environment)")
 
 
 def check_fluent() -> Check:
