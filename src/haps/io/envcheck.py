@@ -65,7 +65,6 @@ PACKAGES: dict[str, str] = {
     "ax": "ax-platform",
     "SALib": "salib",
     "chaospy": "chaospy",
-    "ortools": "ortools",
     "openmdao": "openmdao",
     "pymupdf": "pymupdf",
     "docx": "python-docx",

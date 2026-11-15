@@ -3,7 +3,7 @@
 **Project:** Modular Solar-Electric UAV for Emergency Telecommunications: A Low-Altitude Proof-of-Concept for Energy-Optimised, Multi-Payload HALE Platforms
 **Team:** Syed Shah Umer (lead), Ateeq-ur-Rehman, Muhammad Hayat Arain. **Supervisor:** Mr. Aun Haider, NUST SMME
 **Document type:** Operational plan for a human team working with AI coding/research agents (human-in-the-loop)
-**Version:** 1.2, 15 Nov 2026 (1.2: literature folder layout, reading rules and intake tools in 3.2 and 3.8; cards T-LIT.00 and T-LIT.03; public repository, individual accounts and drive-only text copies in 3.4. 1.1: repository layout completed; P2 start rule clarified in Section 4; GitHub plan note in 3.4; large-file policy in 3.2)
+**Version:** 1.2, 15 Nov 2026 (1.2: OR-Tools CP-SAT replaced by exhaustive enumeration and SciPy `milp` in 8/9/12.2 because its Windows build clashes with the conda libraries; literature folder layout, reading rules and intake tools in 3.2 and 3.8; cards T-LIT.00 and T-LIT.03; public repository, individual accounts and drive-only text copies in 3.4. 1.1: repository layout completed; P2 start rule clarified in Section 4; GitHub plan note in 3.4; large-file policy in 3.2)
 **Authoritative inputs:** Synopsis Report (PDF, Oct 2026); Title and Synopsis Defence deck (22 slides, incl. hidden slides 8, 9, 20, 22); FYDP Policy (Aero) Rev 03, Aug 2026; team decisions recorded in Section 1.4
 
 ---
@@ -146,7 +146,7 @@ fydp-haps/
 
 ### 3.3 Environment
 - **Python 3.12** from conda-forge (Miniforge), pinned in `env/environment.yml` with an exact lock file. Python 3.14 is not used: earlier NumPy failures on Windows came from it.
-- Core packages: numpy, scipy, pandas, xarray, numba, matplotlib, pytest, hypothesis, pydantic (input schemas), pint (unit tests of conversions only), pvlib, aerosandbox (includes NeuralFoil), pymoo, scikit-learn, smt, botorch/gpytorch/ax-platform, SALib, chaospy, statsmodels, ortools, openmdao + openaerostruct, cdsapi, earthaccess, requests (NASA POWER API), pyyaml, rich, jupyter.
+- Core packages: numpy, scipy, pandas, xarray, numba, matplotlib, pytest, hypothesis, pydantic (input schemas), pint (unit tests of conversions only), pvlib, aerosandbox (includes NeuralFoil), pymoo, scikit-learn, smt, botorch/gpytorch/ax-platform, SALib, chaospy, statsmodels, openmdao + openaerostruct, cdsapi, earthaccess, requests (NASA POWER API), pyyaml, rich, jupyter.
 - External executables, versions recorded in `env/tools.md`: XFOIL 6.99, AVL 3.40 (or latest), XFLR5/flow5, VORLAX, OpenVSP (with Python API), ANSYS Fluent and Mechanical (version recorded), OpenFOAM (v2406+ or OpenFOAM.org 12, recorded), Tecplot, SolidWorks, nTop, ArduPilot SITL (needed later, P9).
 - GPU (RTX 3050) is used for PyTorch-based surrogates (BoTorch, NeuralFoil batches); CFD runs on CPU.
 
@@ -274,7 +274,7 @@ Tier-1 requirements must include, at minimum, these items (thresholds fixed in T
 | ID | Task | Method / tools | Outputs | Acceptance | Rev |
 |---|---|---|---|---|---|
 | T-P1.01 | Morphological matrix encoding | Encode synopsis Table 2 axes plus continuous variables (Section 8.1–8.2) as a typed schema (pydantic) for both scales | `src/haps/space/schema.py` | Schema round-trips; each axis option documented with a literature precedent | AR |
-| T-P1.02 | Compatibility rules | Physical/geometric/regulatory incompatibility rules (Section 8.3), each with a written reason; exact feasibility of discrete combinations by constraint programming (OR-Tools CP-SAT) | `space/rules.py`, list of admissible discrete combinations, count | Every excluded combination traceable to a rule; rules reviewed by two humans | SU |
+| T-P1.02 | Compatibility rules | Physical/geometric/regulatory incompatibility rules (Section 8.3), each with a written reason; exact feasibility of discrete combinations by exhaustive enumeration with vectorised rule filters (NumPy; at most 2,560 combinations per scale) (was OR-Tools CP-SAT) | `space/rules.py`, list of admissible discrete combinations, count | Every excluded combination traceable to a rule; rules reviewed by two humans | SU |
 | T-P1.03 | Continuous sampling | Scrambled Sobol sequences per admissible discrete combination (SciPy QMC); bounds from Section 8.2; DM bounds include committed-hardware constraints | Sample generator, sample sets with seeds | Discrepancy (L2-star) reported; balance properties (2^m samples) respected | AR |
 | T-P1.04 | Parametric geometry generator | Build geometry for any candidate in AeroSandbox (for L0/L1 Python analyses) and OpenVSP (for VSPAERO, export to CAD/CFD) from one parameter set | `space/geometry.py`; example renders of each archetype | Round-trip tests (area, span, MAC, AR, volumes) to 1e-6 relative | SU |
 | T-P1.05 | FS ↔ DM linkage | Map each FS candidate to its DM counterpart through similitude targets (Re band, C_L, technology) and DM constraints | `space/linkage.py` | Linkage rules documented with source (Wolowicz et al. 1979) | AR |
@@ -520,7 +520,7 @@ Physics models remain the reference at every level; machine learning is used onl
 
 ## 9. Evaluation, ranking and optimisation
 
-1. **Feasibility:** Tier-1 gate (uncertainty-aware); exact discrete feasibility by constraint programming; continuous constraints in the models.
+1. **Feasibility:** Tier-1 gate (uncertainty-aware); exact discrete feasibility by exhaustive enumeration of the discrete combinations with rule filters; continuous constraints in the models.
 2. **Scoring:** s_ij ∈ [0, 1] per requirement from margins (scoring functions declared at G0).
 3. **Ranking:** constrained weighted sum (AHP weights); TOPSIS; Pareto dominance; Kendall τ between method rankings.
 4. **Robustness (U1):** Morris → Sobol; Monte Carlo over weights (AHP-consistent) and inputs; rank acceptability; N ≥ 2,500 per probability estimate.
@@ -596,7 +596,7 @@ Status: **Core** = on the critical path; **Check** = independent cross-check; **
 | Tool / method | Purpose | Phase | Inputs → outputs | How trusted | Status | Key reference |
 |---|---|---|---|---|---|---|
 | AHP (eigenvector, CR) | Tier and within-tier weights | P0 | Pairwise judgements → weights, CR | CR < 0.10; sensitivity in U1 | Core | Saaty [34] |
-| Constraint programming (OR-Tools CP-SAT) / ILP | Exact feasibility of discrete combinations and component choices | P1, P3 | Rules → admissible set | Rule audit by two humans | Core | Synopsis 4.3 |
+| Exhaustive enumeration + rule filters (NumPy); mixed-integer LP (SciPy `milp`, HiGHS) | Exact feasibility of discrete combinations (≤ 2,560 per scale, enumerated completely); integer component choices | P1, P3 | Rules → admissible set | Rule audit by two humans; enumeration count reported | Core | Synopsis 4.3; Huangfu & Hall 2018 (HiGHS) |
 | Weighted sum (constrained) | Ranking | P4 | Scores, weights → ranking | Compared with TOPSIS/Pareto | Core | Marler & Arora [31] |
 | TOPSIS | Ranking | P4 | → closeness coefficients | Kendall τ agreement | Core | Hwang & Yoon [35] |
 | Pareto dominance | Non-dominated sets | P3–P7 | → fronts | — | Core | [31] |

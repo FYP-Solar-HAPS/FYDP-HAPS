@@ -52,7 +52,7 @@ Last updated: 15 Nov 2026
 | T-P0.04 | Constraint forms and filter order (`criteria-v1`) | T-P0.02, T-W0.04 | SU | BLOCKED | |
 | T-P0.05 | Traceability skeleton | T-P0.02, T-P1.01 | AR | BLOCKED | |
 | T-P1.01 | Morphological matrix schema (both scales) | T-W0.02 | AR | BLOCKED | |
-| T-P1.02 | Compatibility rules and admissible set (CP-SAT) | T-P1.01 | SU | BLOCKED | |
+| T-P1.02 | Compatibility rules and admissible set (exhaustive enumeration) | T-P1.01 | SU | BLOCKED | |
 | T-P1.03 | Continuous sampling (scrambled Sobol) | T-P1.01, T-P1.02 | AR | BLOCKED | |
 | T-P1.04 | Parametric geometry generator (AeroSandbox + OpenVSP) | T-P1.01 | SU | BLOCKED | |
 | T-P1.05 | FS ↔ DM linkage rules | T-P1.01, T-P0.02 | AR | BLOCKED | |
@@ -127,6 +127,7 @@ Last updated: 15 Nov 2026
 | Date | Change | By |
 |---|---|---|
 | 14 Nov 2026 | Board created from PLAN.md v1.1 | |
+| 15 Nov 2026 | OR-Tools removed (DLL clash on Windows); T-P1.02 uses exhaustive enumeration, SciPy `milp` for integer choices (PLAN.md §8, §9, §12.2) | |
 | 15 Nov 2026 | T-W0.01 → SUBMITTED; T-W0.02 → IN-PROGRESS (PR #2); T-W0.03 → SUBMITTED (PR #3); T-W0.04 → SUBMITTED (PR #4) | |
 | 15 Nov 2026 | Set-up exception added (PLAN.md §3.4): maintainer merges W0 set-up PRs after CI; named reviewer reviews after merge, before G0 | |
 | 15 Nov 2026 | Added T-LIT.00 (literature intake) and T-LIT.03 (gap verification); T-LIT.01 now depends on T-LIT.00 (PLAN.md v1.2) | |
